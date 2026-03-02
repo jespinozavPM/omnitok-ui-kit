@@ -26,7 +26,7 @@ export function I18nProvider({
   children,
   language,
   messages,
-  fallbackLanguage = 'en',
+  fallbackLanguage = 'es',
 }: I18nProviderProps) {
   const value = useMemo(
     () => createTranslator({ language, messagesByLanguage: messages, fallbackLanguage }),
