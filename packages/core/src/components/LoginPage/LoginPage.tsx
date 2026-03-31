@@ -24,6 +24,8 @@ export interface LoginPageProps extends Omit<HTMLAttributes<HTMLDivElement>, 'on
   onForgotPassword?: () => void;
   /** Remember me option */
   showRememberMe?: boolean;
+  /** Show forgot password option */
+  showForgotPassword?: boolean;
   /** Footer content */
   footer?: ReactNode;
   /** Background variant */
@@ -42,6 +44,7 @@ export const LoginPage = forwardRef<HTMLDivElement, LoginPageProps>(
       error,
       onForgotPassword,
       showRememberMe = true,
+      showForgotPassword = true,
       footer,
       variant = 'gradient',
       className,
@@ -144,7 +147,7 @@ export const LoginPage = forwardRef<HTMLDivElement, LoginPageProps>(
               <span className="text-sm text-neutral-600">{t('login.rememberMe')}</span>
             </label>
           )}
-          {onForgotPassword && (
+          {showForgotPassword && onForgotPassword && (
             <button
               type="button"
               onClick={onForgotPassword}

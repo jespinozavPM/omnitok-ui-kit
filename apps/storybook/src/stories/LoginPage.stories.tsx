@@ -32,6 +32,30 @@ const LogoWideWhite = () => (
   <img src="/omnitok-logo.svg" alt="Omnitok" className="h-10 w-auto object-contain" />
 );
 
+export const NoForgotPassword: Story = {
+  args: {
+    logo: <LogoWideColor />,
+    logoWide: <LogoWideColor />,
+    language: 'en',
+    variant: 'gradient',
+    onLoginSubmit: (email, password) => {
+      console.log('Login:', { email, password });
+    },
+    onForgotPassword: () => {
+      console.log('Forgot password clicked');
+    },
+    showForgotPassword: false,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'LoginPage with showForgotPassword set to false. The forgot password button should not be visible.',
+      },
+    },
+  },
+};
+
 export const Gradient: Story = {
   args: {
     logo: <LogoWideColor />,
