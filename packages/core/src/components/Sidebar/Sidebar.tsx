@@ -1,4 +1,4 @@
-import { forwardRef, type HTMLAttributes, type ReactNode, useState } from 'react';
+import { forwardRef, type HTMLAttributes, type ReactNode, useState, type MouseEvent } from 'react';
 import { ChevronDown, ChevronRight, PanelLeftClose } from 'lucide-react';
 import { cn } from '../../utils/cn';
 
@@ -76,7 +76,7 @@ const SidebarItemComponent = ({
   // Modified clicks (Ctrl/Cmd/Shift/middle) are ignored so the browser can
   // open a new tab naturally. Normal left-clicks are intercepted to allow
   // SPA navigation via onItemClick.
-  const handleAnchorClick = (event: React.MouseEvent) => {
+  const handleAnchorClick = (event: MouseEvent) => {
     const isModifiedClick = event.ctrlKey || event.metaKey || event.shiftKey || event.button !== 0;
 
     if (isModifiedClick) {
