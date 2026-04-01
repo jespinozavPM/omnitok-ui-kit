@@ -109,7 +109,12 @@ export const SpaLinksWithNewTabSupport: Story = {
           items={[
             { id: 'dashboard', label: 'Dashboard', icon: <Home size={20} />, href: '/dashboard' },
             { id: 'users', label: 'Users', icon: <Users size={20} />, href: '/users' },
-            { id: 'analytics', label: 'Analytics', icon: <BarChart3 size={20} />, href: '/analytics' },
+            {
+              id: 'analytics',
+              label: 'Analytics',
+              icon: <BarChart3 size={20} />,
+              href: '/analytics',
+            },
             { id: 'settings', label: 'Settings', icon: <Settings size={20} />, href: '/settings' },
           ]}
           logo={LogoExpanded}
@@ -166,38 +171,39 @@ export const WithFooter: Story = {
   render: () => {
     const [collapsed, setCollapsed] = useState(false);
     return (
-    <div className="h-screen">
-      <Sidebar
-        items={sidebarItems}
-        logo={LogoExpanded}
-        logoCollapsed={LogoCollapsed}
-        systemName="Dashboard"
-        activeId="dashboard"
-        collapsed={collapsed}
-        onCollapsedChange={setCollapsed}
-        collapsible
-        footer={
-          <div className="flex flex-col gap-2">
-            <button className="flex items-center gap-3 px-4 py-2 text-sm text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
-              <HelpCircle size={20} />
-              <span className={cn(collapsed && 'hidden')}>Help & Support</span>
-            </button>
-            <button className="flex items-center gap-3 px-4 py-2 text-sm text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
-              <LogOut size={20} />
-              <span className={cn(collapsed && 'hidden')}>Logout</span>
-            </button>
-            <div className="flex items-center gap-3 px-4 py-2 border-t border-white/10 mt-2 pt-4">
-              <Avatar initials="PJ" size="sm" />
-              <div className={cn(collapsed && 'hidden')}>
-                <div className="text-sm font-medium text-white">Pablo Junyent</div>
-                <div className="text-xs text-white/50">Admin</div>
+      <div className="h-screen">
+        <Sidebar
+          items={sidebarItems}
+          logo={LogoExpanded}
+          logoCollapsed={LogoCollapsed}
+          systemName="Dashboard"
+          activeId="dashboard"
+          collapsed={collapsed}
+          onCollapsedChange={setCollapsed}
+          collapsible
+          footer={
+            <div className="flex flex-col gap-2">
+              <button className="flex items-center gap-3 px-4 py-2 text-sm text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+                <HelpCircle size={20} />
+                <span className={cn(collapsed && 'hidden')}>Help & Support</span>
+              </button>
+              <button className="flex items-center gap-3 px-4 py-2 text-sm text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+                <LogOut size={20} />
+                <span className={cn(collapsed && 'hidden')}>Logout</span>
+              </button>
+              <div className="flex items-center gap-3 px-4 py-2 border-t border-white/10 mt-2 pt-4">
+                <Avatar initials="PJ" size="sm" />
+                <div className={cn(collapsed && 'hidden')}>
+                  <div className="text-sm font-medium text-white">Pablo Junyent</div>
+                  <div className="text-xs text-white/50">Admin</div>
+                </div>
               </div>
             </div>
-          </div>
-        }
-      />
-    </div>
-  )},
+          }
+        />
+      </div>
+    );
+  },
 };
 
 export const WithNestedItems: Story = {
