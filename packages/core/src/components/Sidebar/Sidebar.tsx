@@ -1,4 +1,10 @@
-import { forwardRef, type HTMLAttributes, type ReactNode, useState } from 'react';
+import {
+  forwardRef,
+  type HTMLAttributes,
+  type MouseEvent as ReactMouseEvent,
+  type ReactNode,
+  useState,
+} from 'react';
 import { ChevronDown, ChevronRight, PanelLeftClose } from 'lucide-react';
 import { cn } from '../../utils/cn';
 
@@ -42,7 +48,12 @@ export interface SidebarProps extends HTMLAttributes<HTMLElement> {
   collapsible?: boolean;
   /** Custom active item ID */
   activeId?: string;
-  /** Callback when item is clicked */
+  /**
+   * Callback when item is clicked.
+   * For href items, only called on normal left-clicks — modified clicks
+   * (Ctrl/Cmd/Shift/middle) are left entirely to the browser so new-tab
+   * behaviour works without interference.
+   */
   onItemClick?: (item: SidebarItem) => void;
 }
 
@@ -66,19 +77,37 @@ const SidebarItemComponent = ({
   const [expanded, setExpanded] = useState(false);
   const hasChildren = item.children && item.children.length > 0;
   const isActive = item.active || item.id === activeId;
+  const hasSpaHandler = Boolean(onItemClick || item.onClick);
 
-  const handleClick = () => {
+  const handleClick = (event?: ReactMouseEvent<HTMLAnchorElement | HTMLButtonElement>) => {
+    const isModifiedClick = Boolean(
+      event && (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
+    );
+    const isPlainLeftClick = !event || (!isModifiedClick && event.button === 0);
+
     if (hasChildren) {
+      event?.preventDefault();
+
       if (collapsed) {
         onCollapsedChange?.(false);
         setExpanded(true);
       } else {
         setExpanded(!expanded);
       }
-    } else {
-      onItemClick?.(item);
-      item.onClick?.();
+
+      return;
     }
+
+    if (item.href && !isPlainLeftClick) {
+      return;
+    }
+
+    if (item.href && isPlainLeftClick && hasSpaHandler) {
+      event?.preventDefault();
+    }
+
+    onItemClick?.(item);
+    item.onClick?.();
   };
 
   const content = (
@@ -99,10 +128,7 @@ const SidebarItemComponent = ({
           )}
           {hasChildren && (
             <ChevronDown
-              className={cn(
-                'w-3.5 h-3.5 transition-transform',
-                expanded && 'rotate-180'
-              )}
+              className={cn('w-3.5 h-3.5 transition-transform', expanded && 'rotate-180')}
             />
           )}
         </>
@@ -114,27 +140,30 @@ const SidebarItemComponent = ({
     'flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium rounded-lg',
     'transition-all duration-200 cursor-pointer',
     'text-white/80 hover:text-white hover:bg-white/10',
-    isActive && [
-      'gradient-active',
-      '!text-white',
-      'mx-2',
-      'font-medium',
-    ],
+    isActive && ['gradient-active', '!text-white', 'mx-2', 'font-medium'],
     level > 0 && 'ml-4',
     collapsed && 'justify-center px-2'
   );
 
   return (
     <div>
-      {item.dividerBefore && (
-        <div className="my-2 border-t border-white/10" role="separator" />
-      )}
+      {item.dividerBefore && <div className="my-2 border-t border-white/10" role="separator" />}
       {item.href ? (
-        <a href={item.href} className={itemClasses} onClick={handleClick} title={collapsed ? item.label : undefined}>
+        <a
+          href={item.href}
+          className={itemClasses}
+          onClick={handleClick}
+          title={collapsed ? item.label : undefined}
+        >
           {content}
         </a>
       ) : (
-        <button type="button" className={cn(itemClasses, 'w-full text-left')} onClick={handleClick} title={collapsed ? item.label : undefined}>
+        <button
+          type="button"
+          className={cn(itemClasses, 'w-full text-left')}
+          onClick={handleClick}
+          title={collapsed ? item.label : undefined}
+        >
           {content}
         </button>
       )}
@@ -209,9 +238,7 @@ export const Sidebar = forwardRef<HTMLElement, SidebarProps>(
             <>
               <div className="flex flex-col flex-1 min-w-0">
                 <div className="flex items-center justify-center">
-                  {expandedLogo || (
-                    <span className="text-lg font-bold text-white">Omnitok</span>
-                  )}
+                  {expandedLogo || <span className="text-lg font-bold text-white">Omnitok</span>}
                 </div>
                 {systemName && (
                   <span className="text-[10px] text-white/50 uppercase tracking-wider mt-0.5 text-center leading-tight">
@@ -248,11 +275,7 @@ export const Sidebar = forwardRef<HTMLElement, SidebarProps>(
         </nav>
 
         {/* Footer */}
-        {footer && (
-          <div className="p-3 border-t border-white/10">
-            {footer}
-          </div>
-        )}
+        {footer && <div className="p-3 border-t border-white/10">{footer}</div>}
       </aside>
     );
   }
