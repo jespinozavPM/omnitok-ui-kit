@@ -42,7 +42,12 @@ export interface SidebarProps extends HTMLAttributes<HTMLElement> {
   collapsible?: boolean;
   /** Custom active item ID */
   activeId?: string;
-  /** Callback when item is clicked */
+  /**
+   * Callback when item is clicked.
+   * For href items, only called on normal left-clicks — modified clicks
+   * (Ctrl/Cmd/Shift/middle) are left entirely to the browser so new-tab
+   * behaviour works without interference.
+   */
   onItemClick?: (item: SidebarItem) => void;
 }
 
@@ -67,7 +72,26 @@ const SidebarItemComponent = ({
   const hasChildren = item.children && item.children.length > 0;
   const isActive = item.active || item.id === activeId;
 
-  const handleClick = () => {
+  // Used for <a href> elements only.
+  // Modified clicks (Ctrl/Cmd/Shift/middle) are ignored so the browser can
+  // open a new tab naturally. Normal left-clicks are intercepted to allow
+  // SPA navigation via onItemClick.
+  const handleAnchorClick = (event: React.MouseEvent) => {
+    const isModifiedClick = event.ctrlKey || event.metaKey || event.shiftKey || event.button !== 0;
+
+    if (isModifiedClick) {
+      // Let the browser handle it — new tab, new window, etc.
+      return;
+    }
+
+    // Normal left-click: prevent full-page reload, delegate to consumer.
+    event.preventDefault();
+    onItemClick?.(item);
+    item.onClick?.();
+  };
+
+  // Used for <button> elements (items without href).
+  const handleButtonClick = () => {
     if (hasChildren) {
       if (collapsed) {
         onCollapsedChange?.(false);
@@ -99,10 +123,7 @@ const SidebarItemComponent = ({
           )}
           {hasChildren && (
             <ChevronDown
-              className={cn(
-                'w-3.5 h-3.5 transition-transform',
-                expanded && 'rotate-180'
-              )}
+              className={cn('w-3.5 h-3.5 transition-transform', expanded && 'rotate-180')}
             />
           )}
         </>
@@ -114,27 +135,30 @@ const SidebarItemComponent = ({
     'flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium rounded-lg',
     'transition-all duration-200 cursor-pointer',
     'text-white/80 hover:text-white hover:bg-white/10',
-    isActive && [
-      'gradient-active',
-      '!text-white',
-      'mx-2',
-      'font-medium',
-    ],
+    isActive && ['gradient-active', '!text-white', 'mx-2', 'font-medium'],
     level > 0 && 'ml-4',
     collapsed && 'justify-center px-2'
   );
 
   return (
     <div>
-      {item.dividerBefore && (
-        <div className="my-2 border-t border-white/10" role="separator" />
-      )}
+      {item.dividerBefore && <div className="my-2 border-t border-white/10" role="separator" />}
       {item.href ? (
-        <a href={item.href} className={itemClasses} onClick={handleClick} title={collapsed ? item.label : undefined}>
+        <a
+          href={item.href}
+          className={itemClasses}
+          onClick={handleAnchorClick}
+          title={collapsed ? item.label : undefined}
+        >
           {content}
         </a>
       ) : (
-        <button type="button" className={cn(itemClasses, 'w-full text-left')} onClick={handleClick} title={collapsed ? item.label : undefined}>
+        <button
+          type="button"
+          className={cn(itemClasses, 'w-full text-left')}
+          onClick={handleButtonClick}
+          title={collapsed ? item.label : undefined}
+        >
           {content}
         </button>
       )}
@@ -209,9 +233,7 @@ export const Sidebar = forwardRef<HTMLElement, SidebarProps>(
             <>
               <div className="flex flex-col flex-1 min-w-0">
                 <div className="flex items-center justify-center">
-                  {expandedLogo || (
-                    <span className="text-lg font-bold text-white">Omnitok</span>
-                  )}
+                  {expandedLogo || <span className="text-lg font-bold text-white">Omnitok</span>}
                 </div>
                 {systemName && (
                   <span className="text-[10px] text-white/50 uppercase tracking-wider mt-0.5 text-center leading-tight">
@@ -248,11 +270,7 @@ export const Sidebar = forwardRef<HTMLElement, SidebarProps>(
         </nav>
 
         {/* Footer */}
-        {footer && (
-          <div className="p-3 border-t border-white/10">
-            {footer}
-          </div>
-        )}
+        {footer && <div className="p-3 border-t border-white/10">{footer}</div>}
       </aside>
     );
   }
