@@ -98,6 +98,50 @@ export const Collapsible: Story = {
   },
 };
 
+export const SpaLinksWithNewTabSupport: Story = {
+  render: () => {
+    const [activeId, setActiveId] = useState('dashboard');
+    const [lastAction, setLastAction] = useState('Waiting for click...');
+
+    return (
+      <div className="h-screen flex">
+        <Sidebar
+          items={[
+            { id: 'dashboard', label: 'Dashboard', icon: <Home size={20} />, href: '/dashboard' },
+            { id: 'users', label: 'Users', icon: <Users size={20} />, href: '/users' },
+            { id: 'analytics', label: 'Analytics', icon: <BarChart3 size={20} />, href: '/analytics' },
+            { id: 'settings', label: 'Settings', icon: <Settings size={20} />, href: '/settings' },
+          ]}
+          logo={LogoExpanded}
+          logoCollapsed={LogoCollapsed}
+          systemName="SPA Navigation"
+          activeId={activeId}
+          onItemClick={(item) => {
+            setActiveId(item.id);
+            setLastAction(`SPA navigation to ${item.href ?? item.id}`);
+          }}
+        />
+
+        <main className="flex-1 p-6 bg-background text-foreground overflow-y-auto">
+          <h2 className="text-2xl font-semibold mb-4">Link behavior demo</h2>
+          <ul className="list-disc pl-5 space-y-2 text-sm">
+            <li>Normal left click: updates state via SPA callback without full page refresh.</li>
+            <li>Ctrl/Cmd + click: browser opens a new tab natively.</li>
+            <li>Mouse wheel/middle click: browser opens a new tab natively.</li>
+          </ul>
+
+          <div className="mt-6 rounded-lg border border-border p-4">
+            <p className="text-sm text-muted-foreground">Active item</p>
+            <p className="text-base font-medium">{activeId}</p>
+            <p className="mt-3 text-sm text-muted-foreground">Last SPA action</p>
+            <p className="text-base font-medium">{lastAction}</p>
+          </div>
+        </main>
+      </div>
+    );
+  },
+};
+
 export const WithCustomLogo: Story = {
   render: () => {
     const [collapsed, setCollapsed] = useState(false);
