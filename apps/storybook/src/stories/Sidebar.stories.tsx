@@ -147,6 +147,79 @@ export const SpaLinksWithNewTabSupport: Story = {
   },
 };
 
+export const WithOptionalDataId: Story = {
+  render: () => {
+    const [activeId, setActiveId] = useState('dashboard');
+    const [lastClicked, setLastClicked] = useState<{ id: string; dataId?: string } | null>(null);
+
+    return (
+      <div className="h-screen flex">
+        <Sidebar
+          items={[
+            {
+              id: 'dashboard',
+              label: 'Dashboard',
+              icon: <Home size={20} />,
+              href: '/dashboard',
+              dataId: 'nav-dashboard',
+            },
+            {
+              id: 'users',
+              label: 'Users',
+              icon: <Users size={20} />,
+              href: '/users',
+            },
+            {
+              id: 'analytics',
+              label: 'Analytics',
+              icon: <BarChart3 size={20} />,
+              dataId: 'nav-analytics',
+            },
+            {
+              id: 'settings',
+              label: 'Settings',
+              icon: <Settings size={20} />,
+            },
+          ]}
+          logo={LogoExpanded}
+          logoCollapsed={LogoCollapsed}
+          systemName="Optional data-id"
+          activeId={activeId}
+          onItemClick={(item) => {
+            setActiveId(item.id);
+            setLastClicked({ id: item.id, dataId: item.dataId });
+          }}
+        />
+
+        <main className="flex-1 p-6 bg-background text-foreground overflow-y-auto">
+          <h2 className="text-2xl font-semibold mb-2">Optional data-id demo</h2>
+          <p className="text-sm text-muted-foreground mb-6">
+            Items with <strong>dataId</strong> render a <strong>data-id</strong> attribute. Items
+            without it still work normally.
+          </p>
+
+          <div className="rounded-lg border border-border p-4 space-y-3">
+            <div>
+              <p className="text-sm text-muted-foreground">Active item</p>
+              <p className="text-base font-medium">{activeId}</p>
+            </div>
+
+            <div>
+              <p className="text-sm text-muted-foreground">Last clicked id</p>
+              <p className="text-base font-medium">{lastClicked?.id ?? 'None'}</p>
+            </div>
+
+            <div>
+              <p className="text-sm text-muted-foreground">Last clicked dataId</p>
+              <p className="text-base font-medium">{lastClicked?.dataId ?? 'Undefined'}</p>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  },
+};
+
 export const WithCustomLogo: Story = {
   render: () => {
     const [collapsed, setCollapsed] = useState(false);
