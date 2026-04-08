@@ -5,6 +5,8 @@ import { cn } from '../../utils/cn';
 export interface SidebarItem {
   /** Unique identifier */
   id: string;
+  /** Optional value for the HTML id attribute */
+  elementId?: string;
   /** Display label */
   label: string;
   /** Icon component */
@@ -146,6 +148,7 @@ const SidebarItemComponent = ({
       {item.href ? (
         <a
           href={item.href}
+          id={item.elementId}
           className={itemClasses}
           onClick={handleAnchorClick}
           title={collapsed ? item.label : undefined}
@@ -155,6 +158,7 @@ const SidebarItemComponent = ({
       ) : (
         <button
           type="button"
+          id={item.elementId}
           className={cn(itemClasses, 'w-full text-left')}
           onClick={handleButtonClick}
           title={collapsed ? item.label : undefined}
