@@ -147,10 +147,10 @@ export const SpaLinksWithNewTabSupport: Story = {
   },
 };
 
-export const WithOptionalDataId: Story = {
+export const WithOptionalElementId: Story = {
   render: () => {
     const [activeId, setActiveId] = useState('dashboard');
-    const [lastClicked, setLastClicked] = useState<{ id: string; dataId?: string } | null>(null);
+    const [lastClicked, setLastClicked] = useState<{ id: string; elementId?: string } | null>(null);
 
     return (
       <div className="h-screen flex">
@@ -161,7 +161,7 @@ export const WithOptionalDataId: Story = {
               label: 'Dashboard',
               icon: <Home size={20} />,
               href: '/dashboard',
-              dataId: 'nav-dashboard',
+              elementId: 'nav-dashboard',
             },
             {
               id: 'users',
@@ -173,7 +173,7 @@ export const WithOptionalDataId: Story = {
               id: 'analytics',
               label: 'Analytics',
               icon: <BarChart3 size={20} />,
-              dataId: 'nav-analytics',
+              elementId: 'nav-analytics',
             },
             {
               id: 'settings',
@@ -183,18 +183,18 @@ export const WithOptionalDataId: Story = {
           ]}
           logo={LogoExpanded}
           logoCollapsed={LogoCollapsed}
-          systemName="Optional data-id"
+          systemName="Optional element id"
           activeId={activeId}
           onItemClick={(item) => {
             setActiveId(item.id);
-            setLastClicked({ id: item.id, dataId: item.dataId });
+            setLastClicked({ id: item.id, elementId: item.elementId });
           }}
         />
 
         <main className="flex-1 p-6 bg-background text-foreground overflow-y-auto">
-          <h2 className="text-2xl font-semibold mb-2">Optional data-id demo</h2>
+          <h2 className="text-2xl font-semibold mb-2">Optional elementId demo</h2>
           <p className="text-sm text-muted-foreground mb-6">
-            Items with <strong>dataId</strong> render a <strong>data-id</strong> attribute. Items
+            Items with <strong>elementId</strong> render an <strong>id</strong> attribute. Items
             without it still work normally.
           </p>
 
@@ -210,8 +210,8 @@ export const WithOptionalDataId: Story = {
             </div>
 
             <div>
-              <p className="text-sm text-muted-foreground">Last clicked dataId</p>
-              <p className="text-base font-medium">{lastClicked?.dataId ?? 'Undefined'}</p>
+              <p className="text-sm text-muted-foreground">Last clicked elementId</p>
+              <p className="text-base font-medium">{lastClicked?.elementId ?? 'Undefined'}</p>
             </div>
           </div>
         </main>
